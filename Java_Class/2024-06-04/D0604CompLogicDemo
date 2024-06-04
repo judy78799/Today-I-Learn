@@ -1,0 +1,21 @@
+package com.keduit;
+
+public class D0604CompLogicDemo {
+	public static void main(String[] args) {
+		
+		int x = 0;
+		int y = 1;
+		
+		
+		System.out.println((x < 1) | (--y < 1)); 
+		//이미 x의 결과가 참이므로 그 다음 비교연산은 수행하지 않는다.(SCE)
+		//SCE(short-cut evaluation): 연산의 속도, 효율을 높이기 위하여 불필요한 연산을 생략하는 행위를 말함.
+		System.out.println("x = " + x + ", y = " + y);
+		
+		System.out.println((x < y) | (y-- < 1));
+		System.out.println("x = " + x + ", y = " + y);
+		
+		
+	}
+
+}

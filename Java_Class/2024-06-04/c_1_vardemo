@@ -1,0 +1,29 @@
+package com.keduit;
+
+public class D0624VarDemo {
+	//1. var은 메서드 내부에서만 사용할 수 있다.
+	//var a =1;
+	public static void main(String[] args) {
+		
+		//2. var를 변수 이름으로 사용할 수 없다.
+		int var = 1;
+		var x = 1;
+		//3. 변수에 null을 대입할 수 없다. 타입을 추론할 수 없기 때문에 string, int 둘 다 가능
+		//var str = null; 
+		
+		//4. 초기 값이 없으므로 타입 추론이 불가 error
+		//var oops;
+		//oops = 1;		//5. 선언과 초기화가 따로 진행될 수 없다.
+		
+		//6. 변수는 한번에 선언 불가능.
+		//var x = 1, y = 3, z = 4
+		
+		
+		
+	}
+	
+	//7. 12행 처럼 변수 x의 타입을 추론할 수 없다.
+	//메서드의 매개변수의 타입 추론이 불가하므로 error
+	//void test(var x) {} 
+
+}

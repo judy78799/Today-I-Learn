@@ -1,0 +1,31 @@
+package com.keduit;
+
+import java.util.Scanner;
+
+public class D0604ScannerDemo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		Scanner scan = new Scanner(System.in);
+		int x = scan.nextInt();
+		int y = scan.nextInt();
+		System.out.printf("%d * %d는 %d입니다", x,y,x*y);
+		System.out.println();
+		
+		
+		Scanner scan2 = new Scanner(System.in);
+		System.out.print("문자열 입력 : ");
+		String str1 = scan2.nextLine();
+		
+		System.out.println("문자열 입력 : ");
+		String str2 = scan2.nextLine();
+		
+		System.out.printf("입력된 문자열1 : %s \n", str1);
+		System.out.printf("입력된 문자열2 : %s \n", str2);
+		scan.close();
+		
+				
+	}
+
+}

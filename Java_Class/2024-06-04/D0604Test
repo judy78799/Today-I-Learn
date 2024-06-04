@@ -1,0 +1,13 @@
+package com.keduit;
+
+public class D0604Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int x = 25;
+		int y = 2;
+		int result = 25 % 2;
+		System.out.printf("%d / %d는 %d 입니다.", x, y, result);
+	}
+
+}

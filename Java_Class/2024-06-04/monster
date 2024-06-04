@@ -21,3 +21,36 @@ bandage = (++x/t)
 // health = 최대 체력 정수, attacks = 몬스터의 공격 시간과 피해량을 담은 2차원 정수 배열 []
 //모든 공격이 끝난 직후 남은 체력을 return!!!!!!! solution 함수 완성하기.
 //만약 몬스터의 공격을 받고 캐릭터의 체력이 0 이하가 되어 죽는다면 -1을 return
+
+
+
+
+
+package com.keduit;
+
+public class D0604ProgrammingTest {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+//		char i = '*';
+//		String[] strArray; //배열 담아줄 애
+//		for (i = 0; i < 11; i++) {
+//			strArray += i; 
+//		}
+//		
+//		
+		
+//		char a = '*';
+		String a = "***********";
+		System.out.println(a);
+		if (a == a) {
+//			a = a.replace("*","b");
+			 a = a.deleteCharAt(5);
+//			System.out.println('b');
+		}
+		System.out.println(a);
+		
+
+	}
+
+}

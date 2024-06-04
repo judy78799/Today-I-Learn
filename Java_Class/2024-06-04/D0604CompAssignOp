@@ -31,6 +31,21 @@ public class D0604CompAssignOp {
 		value %= 3;
 		System.out.println("값 = " + value);
 
+		
+		//삼항 연산자
+		
+		int x = 1;
+		int y;
+		
+		y = (x == 1) ? 10 : 20;	//x가 1이면 10을 y에 넣는다. 아니라면 20을 y에 넣는다.
+		
+		System.out.println("y는 : " + y); //21
+		System.out.println("x는 : " + x); //1
+		
+		
+		y = (x == 1) ? x++ : x+20;	//x가 1이라면 y에 x++ 값을 넣는다. 아니라면 x에 20을 더한다.
+		System.out.println("y는 : " + y); //1
+		System.out.println("x는 : " + x); //2
 	}
 
 }

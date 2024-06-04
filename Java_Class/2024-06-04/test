@@ -117,33 +117,15 @@ public class Number2 {
 			int normal = in.nextInt();
 			
 			if((kyo >= 30 && normal>= 30) || (kyo + normal) >= 80) {
-				String degreeOk = (jeon + kyo + normal) >= 140 ? "졸업가능" : "졸업 불가능";
-				System.out.println(degreeOk);
-			}
-		}else {
-			System.out.println("졸업 불가능");
-		}
-		
-		
-		
-		
-		
-//		System.out.println("전공 이수 학점 : " + jeon);
-//		System.out.println("교양 이수 학점 : " + kyo);
-//		System.out.println("일반 이수 학점 : " + normal);
-		
-		
-		if(jeon >= 70) {
-			if((kyo >= 30 && normal>= 30) || (kyo + normal) >= 80) {
-				String degreeOk = (jeon + kyo + normal) >= 140 ? "졸업가능" : "졸업 불가능";
-				System.out.println(degreeOk);
+				String totalDegreeSum = (jeon + kyo + normal) >= 140 ? "졸업가능" : "졸업 불가능";
+				System.out.println(totalDegreeSum);
+			
 			}else {
 				System.out.println("졸업 불가능");
 			}
 		}else {
 			System.out.println("졸업 불가능");
 		}
-		
 		
 		
 		

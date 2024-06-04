@@ -5,7 +5,35 @@ import java.util.Scanner;
 
 public class Number2 {
 	public static void main(String[] args) {
+
+		//1번 별찍기
+		String b = "*";
+		String space = " ";
+		String sum = "";
+//		System.out.println(b);
 		
+		for(int i = 0; i<12; i++) {
+			sum += b;
+			sum += space;
+			System.out.println(sum);
+
+		}
+//		//아이디어1: 별의 위치를 찾은 다음, 왼쪽 오른쪽에 *하나씩 붙여주기
+//		System.out.println("     *     ");
+//		System.out.println("    ***    ");
+//		System.out.println("   *****   ");
+//		System.out.println("  *******  ");
+//		System.out.println(" ********* ");
+//		System.out.println("***********");
+		
+		
+//		System.out.println(b);
+//		System.out.println(sum);
+
+
+
+
+
 		//2번
 //		Scanner in = new Scanner(System.in);
 //		int x = in.nextInt();

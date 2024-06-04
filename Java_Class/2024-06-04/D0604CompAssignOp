@@ -1,0 +1,36 @@
+package com.keduit;
+
+public class D0604CompAssignOp {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		short num = 10;
+		int rate = 3;
+		
+		num = (short) (num + 77L); 
+		rate = (int) (rate * 3.5); 
+		
+		System.out.println(num);//87 long타입
+		System.out.println(rate);//int 이기 때문에 10.5 에서 .5는 무시된다.
+		
+		
+		num = 10;
+		num += 77L;
+		rate = 3;
+		rate *= 3.5;
+		
+		System.out.println(num); //87L
+		System.out.println(rate); //10 double을 int로 바꿀 때 .5는 무시된다.
+		
+		
+		int value = 1;
+		value += 1;
+		System.out.println("값 = " +value);
+		value -= 1;
+		System.out.println("값 = " + value);
+		value %= 3;
+		System.out.println("값 = " + value);
+
+	}
+
+}

@@ -1,5 +1,8 @@
 package D20240605;
 
+
+## break는 for문과 while문에서 사용이 가능하다.
+
 public class BreakDemo {
 
 	public static void main(String[] args) {

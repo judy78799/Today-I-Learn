@@ -2,7 +2,7 @@
 //클래스 내부에서 변수에 할당 외부에서 변수에 할당
 //오버로딩으로 print() 와 print(a,b); 둘 다 사용가능.
 
-
+```
 package com.keduit;
 
 public class PhoneTest {
@@ -15,7 +15,8 @@ public class PhoneTest {
         myPhone.model = "갤럭시 s24";
         myPhone.value = 150;
         myPhone.print();
-        
+
+        //이 부분
         Phone yourPhone = new Phone();
         System.out.println(yourPhone);
         yourPhone.model = "아이폰";
@@ -46,3 +47,4 @@ public class PhoneTest {
     }
 
 }
+```

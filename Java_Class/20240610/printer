@@ -1,0 +1,45 @@
+class Printer {
+
+	//멤버변수 선언
+	int numOfPapers = 0; //남은 종이의 수
+	
+
+	public Printer(int amount) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	//print 메소드 선언
+	//amount = 출력해야할 양
+	public void print(int amount) {
+		//
+		
+		
+		if(amount > numOfPapers && amount > 0) {
+			System.out.println(
+					amount + "장 출력했습니다"+
+					"현재" + (numOfPapers = amount - numOfPapers)+"장 남아있습니다."
+			
+					);
+			//8장 남음
+			//-가 됨
+		}else if(amount < numOfPapers) {
+
+			System.out.println(
+					"모두 출력하려면 용지가"+
+					(amount - numOfPapers)+"장 부족합니다."+
+					numOfPapers+"만 출력합니다."
+					);
+//			numOfPapers = 0;
+			//amount < 0
+		}else {
+			System.out.println(
+					"용지가 없습니다"
+					);
+		}
+		
+		
+		
+	}
+	
+	

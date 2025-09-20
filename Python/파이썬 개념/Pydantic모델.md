@@ -58,7 +58,23 @@ class GenerationResponse(BaseModel):
     pulblic_templates: List[Dict]
 
 ```
+- Pydantic이 ValidationError를 발생 → FastAPI가 자동으로 422 변환
+- 상태코드 422는 **“서버가 요청을 이해했지만, 내용이 유효하지 않아 처리할 수 없음”**을 의미
 
-
-중첩 모델
-모델 안에 또 다른 모델을 포함할 수 있음
+## 422 에러 JSON 구조
+```
+{
+  "detail": [
+    {
+      "loc": ["body", "필드명"],
+      "msg": "에러 메시지",
+      "type": "에러 타입"
+    }
+  ]
+}
+```
+### 🔹 각 필드 의미
+- detail: 에러 상세 목록 (리스트 형태)
+- loc: 오류 위치. 예: ["body", "id"] → 요청 body의 id 필드가 문제라는 뜻
+- msg: 사람이 읽을 수 있는 에러 메시지 (Pydantic이 생성)
+- type: 에러 유형 코드 (예: type_error.integer, value_error.missing)

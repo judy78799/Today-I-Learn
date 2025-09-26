@@ -4,7 +4,7 @@
 - Async/Await 패턴
 
 
-## 1. Abstract Base Classes
+## 1️⃣ Abstract Base Classes
 	•	Python에서 인터페이스/추상 클래스 역할을 하는 것
 	•	클래스의 **공통 인터페이스(메서드 시그니처)**를 정의하고,
 구현은 하위 클래스가 맡도록 강제하는 구조
@@ -47,7 +47,7 @@ class FieldsPromptBuilder(BasePromptBuilder):
 ```
 
 
-## 타입 힌트
+## 2️⃣ 타입 힌트
 	•	Python은 동적 타이핑이라 타입을 강제하지 않음
 	•	Type Hints는 코드에 타입을 “주석처럼” 표기해서 가독성 + 정적 분석을 돕는 것
 	•	실행 시 강제되지 않지만, mypy 같은 툴로 타입 체크 가능
@@ -71,7 +71,86 @@ class FieldsPromptBuilder(BasePromptBuilder):
 	•	FastAPI, aiohttp 같은 프레임워크가 이 패턴을 적극 사용
 	•	동기 코드 대비 자원 효율↑ / 속도↑
 
+### 🔹 왜 dict, str, int 같은 일반 타입에 await을 걸면 안 되나?
 
+1) await는 “awaitable” 객체에만 가능
+	•	await는 코루틴(coroutine), Task, Future 같은 비동기 객체(awaitable)만 받을 수 있음
+	•	dict, str, int는 그냥 동기적인 값이라서 이벤트 루프에 넘겨줄 게 없음
 
+```
+result = await 5  # ❌ TypeError: object int can't be used in 'await' expression
+```
+
+2) 비동기 함수는 “값을 바로 리턴”할 수도 있음
+	•	async def 함수가 return 하면 그 값이 코루틴이 끝날 때 반환됨
+	•	이 때 그 값이 dict든 str이든 상관없음
+	•	리턴 값 타입은 자유지만,
+await할 때는 그 함수(코루틴) 자체를 await해야 함
+dict, str, int = 그냥 메모리에 즉시 있는 값이라 “기다림”이 없음 → await 불필요
+
+---
+
+즉, “await는 반드시 비동기 객체(코루틴, Task, Future)에만 붙는다”
+반환값이 dict든 str이든 int든 상관없음.
+그 값들은 await이 아니라 변수에 그냥 받으면 됨.
+
+### 이벤트 루프 동작원리
+
+```
+ ┌─────────────────────────────────────────────────────────────┐
+ │                      이벤트 루프(Event Loop)                   │
+ │─────────────────────────────────────────────────────────────│
+ │    준비된 코루틴(Task/Future)들을 queue에 넣고 관리                │
+ │─────────────────────────────────────────────────────────────│
+ │                                                             │
+ │   ① main() 코루틴 시작                                         │
+ │   ② task1(), task2() 코루틴 생성 → Task/Future로 감싸짐          │
+ │   ③ 이벤트 루프가 이 Task들을 번갈아가며 실행(run)                   │
+ │   ④ await asyncio.sleep(n) 만나면:                           │
+ │        - 실행을 잠시 중단(suspend)하고 루프에 제어권 반환             │
+ │        - “n초 뒤에 다시 깨워줘” 예약                              │      
+ │   ⑤ 그동안 다른 코루틴(task2 같은)이 실행될 수 있음                   │
+ │   ⑥ 예약된 시간이 되면 이벤트 루프가 다시 코루틴 실행(resume)           │
+ │                                                             │
+ └─────────────────────────────────────────────────────────────┘
+```
+- await = “내가 지금 기다려야 하는 작업이 끝날 때까지 이벤트 루프한테 제어권 넘길게”
+- 이렇게 하면 이벤트 루프가 다른 코루틴을 돌릴 수 있어서 동시성 효과가 나는 것.
+
+### 비동기 코드 구조
+```
+import asyncio
+
+async def task1():
+    await asyncio.sleep(1)
+    print("task1 끝")
+
+async def task2():
+    await asyncio.sleep(2)
+    print("task2 끝")
+
+async def main():
+    await asyncio.gather(task1(), task2())
+
+asyncio.run(main())
+```
+### 단계별 흐름 (위 코드 기준)
+	•	t=0s
+	•	main() 실행 → task1, task2 등록
+	•	task1 → await sleep(1) 만나서 루프에 제어권 반환
+	•	task2 → await sleep(2) 만나서 루프에 제어권 반환
+	•	t=1s
+	•	루프가 task1 다시 실행 (sleep 끝났으니)
+	•	“task1 끝” 출력
+	•	t=2s
+	•	루프가 task2 다시 실행 (sleep 끝났으니)
+	•	“task2 끝” 출력
+
+→ 결과: 1초, 2초 각각 기다리면서도 동시에 돌아가는 것처럼 보임
+
+- 이벤트 루프(Event Loop) : 비동기 작업(Task/Future)을 관리·스케줄링하는 엔진
+- 코루틴(Coroutine) : async def로 정의된 함수, awaitable 객체
+- await : 해당 코루틴/Future가 끝날 때까지 실행을 잠시 멈추고(Event Loop에 제어권 반환) 다른 작업 수행 가능하게 함
+- asyncio.sleep(n) : n초 동안 블로킹 대신 Event Loop에 예약 후 다른 작업을 돌릴 수 있게 함
 
 

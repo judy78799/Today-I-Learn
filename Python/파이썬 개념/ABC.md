@@ -1,4 +1,4 @@
-# 개념
+# 학습 개념
 - Abstract Base Classes
 - Type Hints 
 - Async/Await 패턴

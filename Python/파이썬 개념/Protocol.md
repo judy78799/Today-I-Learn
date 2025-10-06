@@ -9,8 +9,10 @@
 - Protocol을 상속한 클래스는 **정적 타입 검사기(mypy, pyright 등)**에서 인터페이스(duck typing 규칙)로 취급.
 - 즉, 이 프로토콜울 상속한 클래스 내부에 정의된 메서드/속성을 가진 객체라면 그 객체가 Savable을 구현했다고 본다.
 - 해당 메서드의 반환 타입이나 매개변수가 **같아야** 함 == 메서드 시그니처까지 일치해야 함.
+<br>
+➡️ Protocol을 “구조적 서브타이핑(structural subtyping)” 으로 처리.
 
-### Protocol을 “구조적 서브타이핑(structural subtyping)” 으로 처리.
+---
 
 ### 메서드 시그니처 범위
 1.	메서드 이름

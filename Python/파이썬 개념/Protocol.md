@@ -51,9 +51,9 @@ def persist_2(obj: Savable) -> None:  # Savable 구현
     """어떤 객체든 저장 가능한 타입(Savable)만 받음"""
     obj.save()
 ```
-•	User는 Savable을 상속하지 않았음.
-•	하지만 save() 메서드를 가지고 있기 때문에, 타입 검사기는 User를 Savable로 인정함.
-•	이게 structural subtyping (구조적 서브타이핑) 개념.
+- User는 Savable을 상속하지 않았음.
+- 하지만 save() 메서드를 가지고 있기 때문에, 타입 검사기는 User를 Savable로 인정함.
+- 이게 structural subtyping (구조적 서브타이핑) 개념.
   
 사용 예시
 ```

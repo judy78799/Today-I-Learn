@@ -78,5 +78,5 @@ persist(o)  # ❌ 타입 체커에서 오류: "Order" has no attribute "save"
 - ABC (abc.ABC + @abstractmethod): 명시적(명목적, nominal) 상속 필요 → 런타임 isinstance/issubclass 체크가 필요하거나 ‘명시적 계약’을 강제할 때 사용.
 
 🔷 현업 권장:
-	•	내부 모듈 경계/공개 API: Protocol로 타입 문서화 + mypy 적용.
-	•	런타임 체크가 핵심인 경우: ABC 혹은 명확한 런타임 검증 로직.
+- 내부 모듈 경계/공개 API: Protocol로 타입 문서화 + mypy 적용.
+- 런타임 체크가 핵심인 경우: ABC 혹은 명확한 런타임 검증 로직.

@@ -72,3 +72,11 @@ class Order:
 o = Order(123)
 persist(o)  # ❌ 타입 체커에서 오류: "Order" has no attribute "save"
 ```
+
+## Protocol vs ABC (언제 무엇을 쓸까)
+- Protocol: 구조적(메서드/속성 존재만 보면 인정), 정적 검사 친화적 → 외부 라이브러리 타입과 느슨하게 결합할 때 유용.
+- ABC (abc.ABC + @abstractmethod): 명시적(명목적, nominal) 상속 필요 → 런타임 isinstance/issubclass 체크가 필요하거나 ‘명시적 계약’을 강제할 때 사용.
+
+🔷 현업 권장:
+	•	내부 모듈 경계/공개 API: Protocol로 타입 문서화 + mypy 적용.
+	•	런타임 체크가 핵심인 경우: ABC 혹은 명확한 런타임 검증 로직.

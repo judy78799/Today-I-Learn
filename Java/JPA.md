@@ -1,8 +1,7 @@
 # JPA(Java Persistence API) -> Interface
 ## 정의
-- 자바 ORM 기술에 대한 API 표준 명세를 의미.
-- ORM을 사용하기 위한 인터페이스를 모아둔 것.
-- 즉 자바 어플리케이션에서 관계형 데이터베이스를 어떻게 사용해야 하는지를 정의하는 방법.
+- 자바 어플리케이션에서 관계형 데이터베이스를 어떻게 사용해야 하는지를 정의하는 방법.
+- 즉, 자바 ORM 기술에 대한 API 표준 명세를 의미.
 - JPA는 단순 명세. 구현은 javax.persistence 패키지 (interface, Enum, Exception, Anotation들로 이루어져있음)
 - JPA를 사용하기 위해서는 ORM 프레임워크를 사용해야 함.(ex. Hibernate)
 

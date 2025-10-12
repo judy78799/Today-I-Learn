@@ -1,4 +1,4 @@
-# JPA
+# JPA(Java Persistence API) -> Interface
 ## 정의
 - 자바 ORM 기술에 대한 API 표준 명세를 의미.
 - ORM을 사용하기 위한 인터페이스를 모아둔 것.

@@ -1,4 +1,5 @@
 # Builder 패턴
+<img width="2040" height="664" alt="image" src="https://github.com/user-attachments/assets/3e197989-b9f2-4674-beaf-016a093996c0" />
 
 - 복잡한 객체의 생성 과정과 표현 방법을 분리하여 다양한 구성의 인스턴스를 만드는 생성 패턴. 
 - 생성자에 들어갈 매개 변수를 메서드로 하나하나 받아들이고 마지막에 통합 빌드해서 객체를 생성하는 방식. 

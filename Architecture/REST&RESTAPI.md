@@ -47,7 +47,7 @@ Client: 사용자 인증이나 context(세션, 로그인 정보) 등을 직접 �
 
 서로 간 의존성이 줄어든다.
 
-Stateless(무상태)
+### Stateless(무상태)
 
 - HTTP 프로토콜은 Stateless Protocol이므로 REST 역시 무상태성을 갖는다.
 - Client의 context를 Server에 저장하지 않는다.

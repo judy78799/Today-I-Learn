@@ -4,7 +4,7 @@
 - 자바 라이브러리에는 close 메서드를 호출해 직접 닫아줘야 하는 자원이 많음.
 - Inputstream, Outputstream, java.sql.Connection 등心］ 좋은 예
 
-## try-finally
+## ✅ try-finally
 - 전통적으로 자원이 제대로 닫힘을 보장하는 수단으로 사용됨.
 - but, 자원이 둘 이상이면 try-finally 방식은 너무 지저분 함.
 
@@ -28,7 +28,7 @@ try{
 }
 ```
 
-## **✅ 1️⃣ try-with-resources란?**
+## **✅ try-with-resources란?**
 
 > AutoCloseable 또는 **Closeable 인터페이스를 구현한 객체를** try 블록 안에서 선언하면, **try 블록이 끝날 때 자동으로 close() 호출해주는 문법**
 > 

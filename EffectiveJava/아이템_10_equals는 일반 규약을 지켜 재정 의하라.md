@@ -24,46 +24,201 @@ throw new AssertionError(); // 호출 금지!
 객체 식별성(object identity두 객체가 물리적으로 같은가)이 아니라 논리적 동치성을 확인해야 하는데, 상
 위 클래스의 eq니als가 논리적 동치성을 비교하도록 재정의되지 않았을 때.
 
-값 클래스
 
-- Integer와 String처럼 값을 표현하는 클래스
-- Enum
+# **🟦 1. 서론 (Introduction)**
 
-## equals 메서드를 재정의할 때는 반드시 일반 규약을 따라야 한다.
+**📘 발표 목적**
 
-equals 메서드는 동치관계(equivalence relation)구현하며, 다음을 만족한다.
-
-- 반사성(reflexivity)： null이 아닌 모든 참조 값 x에 대해, x.equals(x)는 true다.
-- 대칭성(symmetry)： n니II이 아닌 모든 참조 값 x, y에 대해, x.equals(y)가 true면 y.equals(x) 도 true 다.
-- 추이성(transitivity)： null이 아닌 모든 참조 값 x, y, z에 대해, x.equals(y)가 true이고 y.equals(z)도 true면 x.equals(z)도 true다.
-- 일관성(consistency)： n니II이 아닌 모든 참조 값 x, y에 대해, x.equals(y)를 반복해서 호출하면 항상 true를 반환하거나 항상 false를 반환한다.
-- **null-**아님: null이 아닌 모든 참조 값 x에 대해, x.equals(null)은 false다.
-
-규약의 중요성
-
-- 규약을 어기면 프로그램이 이상하게 동작하 거나 종료될 것이고,
-- 원인이 되는 코드를 찾기도 굉장히 어려울 것이다.
-- 세상에 홀로 존재하는 클래스는 없다. (feat. John Donne)
-: 한 클래스의 인스턴스는 다른 곳으로 빈번히 전달된다. 그리고 컬렉션 클래스들을 포함해 수
-많은 클래스는 전달받은 객체가 equals 규약을 지킨다고 가정하고 동작한다.
-
-## equals 규약을 자세히 알아보자
-
-- Object 명세에서 말하는 동치관계 : 집합을 서로 같은 원소들로 이뤄진 부분집합(동치류: (equivalence class； 동치 클래스))으로 나누는 연산
-- equals 메서드가 쓸모 있으려면 모든 원소가 같은 동치류에 속한 어떤 원소와도 서로 교환할 수 있어야 한다.
-
-### 동치관계를 만족시키기 위한 다섯 요건
-
-- 반사성
-    - 객체는 자기 자신과 같아야 한다.
+- 이번 발표에서는 **이펙티브 자바 아이템 10**에서 다루는 equals() 메서드 재정의 원칙을 이해하고,
     
-    ```jsx
-    반사성을 어긴 예 + 요건을 어긴 클래스의 인스턴스를 컬렉션에 넣은 다음 contains 메서드를 호출하는 예
-    ```
+    이를 잘못 구현했을 때 발생하는 문제와 올바른 구현 방법을 명확히 정리한다.
     
-- 대칭성
-    - 두 객체는 서로에 대한 동치 여부에 똑같이 답해야 한다
-    대소문자를 구별하지 않는 문자열
-- 추이성
-  - 첫 번째 객체와 두 번째 객체가 같고, 두 번째 객체와 세 번째 객체가
-같다면, 첫 번째 객체와 세 번째 객체도 같아야 한다.
+
+**📌 배경 / 문제 인식**
+
+- 자바의 모든 클래스는 기본적으로 Object.equals()를 상속받지만,
+    
+    **논리적 동치성(logical equality)** 을 비교하려면 재정의가 필요하다.
+    
+- 하지만 equals를 잘못 재정의하면 컬렉션(HashSet, HashMap 등)에서 예기치 않은 버그가 발생한다.
+
+**🎯 목표 / 기대 효과**
+
+- equals()의 **일반 규약(5가지)** 을 완벽히 이해한다.
+- 재정의 시 **지켜야 할 원칙과 피해야 할 함정**을 습득한다.
+- 객체 동치성 설계에 대한 **논리적 사고력과 코드 품질 향상**을 목표로 한다.
+
+---
+
+# **🟨 2. 본론 (Main Content)**
+
+## **1️⃣ 핵심 개념 정리 (장점 & 단점)**
+
+| **구분** | **설명** |
+| --- | --- |
+| **동일성(identity)** | 두 객체의 참조가 같음 (==) |
+| **동치성(equality)** | 두 객체의 “논리적 내용”이 같음 (equals()) |
+| **기본 equals** | Object.equals()는 동일성 비교 (==) 수행 (객체의 주소 값) |
+| **재정의 필요 시점** | 객체의 **논리적 동치성**을 정의해야 할 때 (예: 값 객체) |
+| **재정의 불필요 시점** | enum, 싱글턴, ==로 충분한 객체 (예: Thread, Socket 등) |
+
+📍 **장점**
+
+- 객체의 의미적 비교 가능 → 비즈니스 로직 명확화
+- 컬렉션 내 검색·비교 기능 정상 작동 (HashMap key 등)
+
+⚠️ **단점 / 주의점**
+
+- equals와 hashCode 불일치 시, 해시 기반 컬렉션 오작동
+- 상속 구조에서는 대칭성·추이성 위반 가능성 존재
+
+---
+
+## **2️⃣ equals의 일반 규약 (5가지 원칙)**
+
+| **규약** | **설명** | **예시** |
+| --- | --- | --- |
+| **① 반사성 (Reflexive)** | x.equals(x)는 항상 true | 자기 자신은 자신과 같아야 함 |
+| **② 대칭성 (Symmetric)** | x.equals(y)가 true면 y.equals(x)도 true | ColorPoint vs Point 비교 시 주의 |
+| **③ 추이성 (Transitive)** | x.equals(y), y.equals(z) → x.equals(z) | 상속 구조에서 규약 위반 위험 |
+| **④ 일관성 (Consistent)** | 값이 변하지 않는 한 결과는 항상 같아야 함 | 외부 상태에 의존 X |
+| **⑤ null-비교 시 false** | x.equals(null)은 항상 false | NullPointerException 발생 X |
+
+## **3️⃣ 구현 시 권장 순서**
+
+1️⃣ **== 비교 (성능 최적화)**
+
+```jsx
+if (this == obj) return true;
+```
+
+2️⃣ **instanceof 검사 (타입 체크)**
+
+```jsx
+if (!(obj instanceof MyClass)) return false;
+```
+
+3️⃣ **형변환 후, 주요 필드 비교**
+
+```jsx
+MyClass other = (MyClass) obj;
+return field1.equals(other.field1)
+    && field2 == other.field2;
+```
+
+4️⃣ **null-safe equals 사용 권장**
+
+```jsx
+Objects.equals(field1, other.field1);
+```
+
+## **4️⃣ equals 재정의 시 흔한 실수 & 해결방안**
+
+| **실수 유형** | **문제점** | **해결 방법** |
+| --- | --- | --- |
+| **상속 구조에서 equals 재정의** | 대칭성·추이성 깨짐 (ColorPoint 문제) | 상속보다 컴포지션 사용 |
+| **hashCode 미재정의** | HashSet, HashMap 에서 동치 객체 탐색 실패 | equals 재정의 시 반드시 hashCode도 재정의 |
+| **Float/Double 비교** | 부동소수점 정밀도 문제 | Float.compare() / Double.compare() 사용 |
+| **성능을 위해 필드 일부만 비교** | 논리적 불일치 | 의미적으로 동일해야 하는 모든 필드 비교 |
+| **외부 자원/가변 필드 비교** | 일관성 위반 가능 | 불변(immutable) 필드만 비교 |
+
+## **5️⃣ 실제 코드 예시**
+
+### **✅ 올바른 equals 구현 예**
+
+```jsx
+public final class PhoneNumber {
+    private final int areaCode, prefix, lineNum;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof PhoneNumber)) return false;
+        PhoneNumber pn = (PhoneNumber) o;
+        return pn.lineNum == lineNum &&
+               pn.prefix == prefix &&
+               pn.areaCode == areaCode;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(areaCode, prefix, lineNum);
+    }
+}
+```
+
+### **❌ 잘못된 예시 (ColorPoint 문제)**
+
+```jsx
+public class Point {
+    private final int x, y;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Point)) return false;
+        Point p = (Point) o;
+        return p.x == x && p.y == y;
+    }
+}
+
+public class ColorPoint extends Point {
+    private final Color color;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ColorPoint)) return false;
+        return super.equals(o) && ((ColorPoint) o).color == color;
+    }
+}
+```
+
+→ new ColorPoint(1,2,RED).equals(new Point(1,2))는 true,
+
+하지만 반대는 false → **대칭성 위반!**
+
+✅ **해결**: 상속 대신 컴포지션 사용
+
+```jsx
+class ColorPoint {
+    private final Point point;
+    private final String color;
+
+    public ColorPoint(int x, int y, String color) {
+        this.point = new Point(x, y);
+        this.color = color;
+    }
+
+    public Point asPoint() {
+        return point;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ColorPoint)) return false;
+        ColorPoint cp = (ColorPoint) obj;
+        return point.equals(cp.point) && color.equals(cp.color);
+    }
+}
+```
+
+# **🟩 3. 요약 (Summary / Conclusion)**
+
+**핵심 포인트 요약**
+
+- equals()는 **반사성·대칭성·추이성·일관성·null 불일치**의 규약을 반드시 지켜야 한다.
+- **논리적 동치성**을 명확히 정의해야 컬렉션과 프레임워크 동작이 예측 가능하다.
+- equals를 재정의하면 **hashCode도 반드시 함께 재정의**해야 한다.
+- **상속보다 컴포지션을 사용**해 규약 위반을 피하라.
+
+---
+
+**느낀 점 / 인사이트**
+
+- equals는 단순 비교 함수가 아니라, **객체의 논리적 동일성을 정의하는 계약(Contract)** 이다.
+- 이 계약을 지키는 것이 코드 품질, 테스트 안정성, 그리고 협업 신뢰성의 핵심임을 깨달았다.
+
+---
+
+**다음 단계 제안**
+
+- 다음 발표에서는 **아이템 11: equals를 재정의하려거든 hashCode도 함께 재정의하라**를 다뤄,
+    
+    해시 기반 자료구조(HashMap, HashSet)에서의 동작 원리를 함께 살펴볼 예정이다.

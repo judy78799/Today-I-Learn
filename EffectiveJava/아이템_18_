@@ -1,0 +1,122 @@
+# 아이템_18_상속보다는 컴포지션을 사용하라.
+## 상속은 캡슐화를 깨트린다.
+
+- 상위 클래스가 어떻게 구현되느냐에 따라 하위 클래스의 동작에 이상이 생길 수 있다.
+- 상위 클래스는 릴리스마다 내부 구현이 달라질 수 있으며, 그 여파로 코드 한 줄 건드리지 않은 하위 클래스가 오동작 할 수 있다.
+
+⇒ 그래서 상위 클래스 설계자가 확장을 충분히 고려하고(고려하지 않고 아닌가) 문서화도 제대로 해두지 않으면 하위 클래스는 상위 클래스의 변화에 발맞춰 수정돼야만 한다.
+
+- 상속을 잘못 사용한 예
+
+```java
+public class InstrumentedHashSet<E> extends HashSet<E> {
+	//c추가된 원소의 수
+	private int addCount = 0;
+	
+	public InstrumentedHashSet(){}
+	
+	public InstrumentedHashSet(int initCap, float loadFactor){
+		super(initCap, loadFactor);
+	}
+	
+	@Override public boolean add(E e){
+		addCount++;
+		return super.add(e);
+	}
+	//아 이렇게하면 Collection을 구현한 매개변수만 올 수 있는 건가?
+	@Override public boolean addAll(Collection<? extends E> c){
+		addCount += c.size();
+		return super.addAll(c); //??????
+	}
+	
+	public int getAddCount(){
+		return addCount;
+	}
+}
+
+```
+
+⬇️ 이 클래스의 인스턴스에 addAll 메서드로 원소 3개를 더했다고 해보자.
+
+```java
+//정적 팩털 메서드 List.of(자바 9이후 지원)
+	InstrumentedHashSet<String> s = new InstrumentedHashSet<>();
+	s.addAll(List.of("틱", "탁탁", "펑"); //결과가 3이라고 예상했겠지만 6을 반환함.
+```
+
+문제 : 결과가 3이라고 예상했겠지만 6을 반환함.
+
+원인 : 
+
+- HashSet의 addAll 메서드가 add 메서드를 사용해 구현되었음.
+- 위와 같은 내부 구현 방식이 HashSet 문서에 쓰여있지 않음.
+- **🔥 왜 HashSet.addAll()이 자식 클래스의 add()를 호출할까?**
+    
+    ### **👉 결론: “동적 디스패치” 때문.**
+    
+    > **자바에서는 인스턴스의 타입이 무엇인지에 따라 호출되는 메서드가 결정된다.**
+    > 
+    - 컴파일 시점: HashSet.add() 처럼 보일 수 있음
+    - 실행 시점: 실제 객체 타입이 InstrumentedHashSet → 재정의된 add() 호출
+    
+    ```java
+    //이렇게 부모 타입으로 참조하더라도 실제로 실행되는 메서드는 자식의 add() 이다.
+    HashSet<String> set = new InstrumentedHashSet<>();
+    set.add("a");
+    ```
+    
+    ### **🧠 그래서 실제로 일어나는 흐름**
+    
+    ```java
+    s.addAll(List.of("틱", "탁탁", "펑")); //요소의 개수가 3개, 인덱스는 2
+    ```
+    
+    ### **단계별로 보면:**
+    
+    1. **InstrumentedHashSet.addAll()** 호출됨
+        
+        → addCount += 3;
+        
+    2. 내부에서는 **HashSet.addAll()**을 호출함
+    3. HashSet.addAll() 내부에서 각 원소마다 add() 호출
+        
+        → 하지만 실제로 실행되는 것은 **InstrumentedHashSet.add()**
+        
+    4. 결과적으로 add()가 **총 3번 더 호출**됨
+        
+        → addCount = 3(초기) + 3(내부 add 호출) = **6**
+        
+    
+    ## **🎯 즉, “이게 가능한 이유는?”**
+    
+    **InstrumentedHashSet이 HashSet을 상속했고, add()를 재정의했기 때문에, 부모의 addAll() 내부에서 add()를 호출해도 실제로는 자식 클래스의 add()가 실행되기 때문이다.**
+    
+    ## 🔴 문제의 본질
+    
+    **상속을 고려하지 않은 HashSet.addAll() 설계 문제**다.
+    
+    HashSet은:
+    
+    - addAll() → add()로 구현되어 있음 (템플릿 메서드 패턴처럼 동작)
+    - add()는 override 가능함
+    
+    따라서 부모 내부에서 override 가능한 메서드를 호출하여,
+    
+    의도치 않은 부작용이 발생한다.
+    
+    이게 바로 Effective Java가 말하는:
+    
+    > 상속을 고려하지 않고 설계된 클래스는 상속하면 사고 난다
+    (Item 19: 상속을 고려해 설계하고 문서화하라. 그렇지 않았다면 상속을 금지하라.)
+    > 
+    
+
+🤔 addAll()메서드만 재정의 하지 않으면 문제 고칠 수 있지 않을까?
+
+: 당장은 제대로 동작할 지 모르지만, HashSet의 addAll이 add 메서드를 이용해 구현했음을 가정한 해법이라는 한계를 가짐.
+
+→ 다른 부분을 사용하는 ‘자기사용’ 여부는 해당클래스의 내부 구현 방식에 해당됨.
+
+⇒ 이런 가정에 기댄 InstrumentedHashSet은 깨지기 쉽다.
+
+🤔 addAll 메서드를 다른 식으로 재정의할 수도 있음.

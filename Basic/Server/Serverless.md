@@ -116,7 +116,8 @@ Firebase
 
 ### 🔶 FaaS 생성 단계
 
-![image.png](attachment:76da6573-ebb3-444b-998d-3f934aaa4fd2:image.png)
+<img width="1416" height="828" alt="image" src="https://github.com/user-attachments/assets/1aa12cb8-44cf-426c-be93-75d2fecd69b7" />
+
 
 1. 사용자는 자신의 프로그램 내부에서 FaaS 함수를 호출하는 구문을 삽입하고 프로그램을 실행하게 되면, 
 FaaS에게 Rest API 형식의 HTTP 요청이 가게 된다.
